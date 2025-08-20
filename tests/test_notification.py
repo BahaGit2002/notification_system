@@ -86,7 +86,6 @@ async def test_send_notification_all_channels_fail(mocker):
         }
     }
 
-    # Настраиваем заглушки: все каналы неуспешны
     ctx["services"]["email"].send.return_value = False
     ctx["services"]["sms"].send.return_value = False
     ctx["services"]["telegram"].send.return_value = False
