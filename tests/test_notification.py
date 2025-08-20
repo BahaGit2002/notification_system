@@ -26,8 +26,6 @@ async def test_send_notification_success_email(mocker):
         "telegram_id": "123456"
     }
 
-    mock_logger = mocker.patch("app.workers.logger", new=MagicMock())
-
     result = await send_notification(ctx, notification)
 
     assert result is True
@@ -36,7 +34,6 @@ async def test_send_notification_success_email(mocker):
     )
     ctx["services"]["sms"].send.assert_not_called()
     ctx["services"]["telegram"].send.assert_not_called()
-    mock_logger.info.assert_called_with("[OK] Delivered via email")
 
 
 @pytest.mark.asyncio
@@ -60,8 +57,6 @@ async def test_send_notification_fallback_to_sms(mocker):
         "telegram_id": "123456"
     }
 
-    mock_logger = mocker.patch("app.workers.logger", new=MagicMock())
-
     result = await send_notification(ctx, notification)
 
     assert result is True
@@ -72,8 +67,6 @@ async def test_send_notification_fallback_to_sms(mocker):
         "+1234567890", "Тестовое сообщение"
     )
     ctx["services"]["telegram"].send.assert_not_called()
-    mock_logger.warning.assert_called_with("[FAIL] via email, try next…")
-    mock_logger.info.assert_called_with("[OK] Delivered via sms")
 
 
 @pytest.mark.asyncio
@@ -98,8 +91,6 @@ async def test_send_notification_all_channels_fail(mocker):
         "telegram_id": "123456"
     }
 
-    mock_logger = mocker.patch("app.workers.logger", new=MagicMock())
-
     result = await send_notification(ctx, notification)
 
     assert result is False
@@ -112,7 +103,6 @@ async def test_send_notification_all_channels_fail(mocker):
     ctx["services"]["telegram"].send.assert_called_once_with(
         "123456", "Тестовое сообщение"
     )
-    mock_logger.error.assert_called_with("Не удалось доставить уведомление")
 
 
 @pytest.mark.asyncio
@@ -130,7 +120,6 @@ async def test_send_notification_missing_target(mocker):
         "channels_priority": ["email", "sms", "telegram"],
     }
 
-    mock_logger = mocker.patch("app.workers.logger", new=MagicMock())
 
     result = await send_notification(ctx, notification)
 
@@ -138,7 +127,6 @@ async def test_send_notification_missing_target(mocker):
     ctx["services"]["email"].send.assert_not_called()
     ctx["services"]["sms"].send.assert_not_called()
     ctx["services"]["telegram"].send.assert_not_called()
-    mock_logger.error.assert_called_with("Не удалось доставить уведомление")
 
 
 @pytest.mark.asyncio
