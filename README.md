@@ -100,7 +100,7 @@ curl -X POST http://localhost:8000/notify/ \
 
 * Для запуска тестов используйте следующую команду:
 ```bash
-docker-compose exec app pytest -v
+docker-compose exec api pytest -v
 ```
 
 ---
